@@ -1,5 +1,64 @@
 {
-  "scopes": [],
-  "attributes": [],
-  "role-templates": []
+  "xsappname": "collabSphere",
+  "tenant-mode": "dedicated",
+  "description": "Security profile for collabSphere Backend",
+  "scopes": [
+    {
+      "name": "uaa.user",
+      "description": "Required for token exchange (standard SAP scope)"
+    },
+    {
+      "name": "$XSAPPNAME.Read",
+      "description": "Basic read access to collabSphere entities"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Full Access to the collabSphere"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Token_Exchange",
+      "description": "UAA Token Exchange",
+      "scope-references": [
+        "uaa.user"
+      ]
+    },
+    {
+      "name": "ApplicationUser",
+      "description": "Basic read access",
+      "scope-references": [
+        "$XSAPPNAME.Read"
+      ]
+    },
+    {
+      "name": "Administrator",
+      "description": "Full repository and workflow administration",
+      "scope-references": [
+        "$XSAPPNAME.Read",
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "role-collections": [
+    {
+      "name": "collabSphere_ApplicationUser",
+      "description": "Basic read-only users",
+      "role-template-references": [
+        "$XSAPPNAME.ApplicationUser"          
+      ]
+    },
+    {
+      "name": "collabSphere_Administrator",
+      "description": "Full access users",
+      "role-template-references": [
+        "$XSAPPNAME.Administrator"           
+      ]
+    }
+  ],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://*.us10-001.hana.ondemand.com/**"
+    ]
+  }
 }
