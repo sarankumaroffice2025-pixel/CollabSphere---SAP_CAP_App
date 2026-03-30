@@ -10,8 +10,32 @@ service collabsphere {
     entity collabSphereAsset           as projection on collabSphere.Asset;
 
     //action to enter the Employee Details
-    action employeeDetails(data: collabSphere.EmployeeDetails) returns {
+    action createEmployeeDetails(data: collabSphere.EmployeeDetails)     returns {
         ID             : String(100);
         creationStatus : Boolean;
+    }
+
+    //action to get the Employee Details
+    action accessEmployeeDetails(ID: String)                             returns {
+        ID        : String;
+        userName  : String;
+        firstName : String;
+        lastName  : String;
+        fullName  : String;
+        email     : String;
+        position  : String;
+        isActive  : Boolean;
+        resume    : collabSphere.AttachmentDetails;
+    }
+
+    //action to update the Employee Details
+    action editEmployeeDetails(data: collabSphere.updateEmployeeDetails) returns {
+        ID           : String;
+        updateStatus : Boolean;
+    }
+
+    //action to delete the Employee Details(False Deletion Method)
+    action deleteEmployeeDetails(ID: String)                             returns {
+        deletetionStatus : Boolean;
     }
 }
