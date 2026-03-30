@@ -5,7 +5,7 @@ using {
     managed
 } from '@sap/cds/common';
 
-type employeePosition  : String enum {
+type employeePosition      : String enum {
     ceo = 'ceo';
     cto = 'cto';
     cfo = 'cfo';
@@ -39,14 +39,14 @@ type employeePosition  : String enum {
     others = 'others';
 };
 
-type approvalStatus    : String enum {
+type approvalStatus        : String enum {
     approved = 'approved';
     onhold = 'onhold';
     request = 'request';
     cancelled = 'cancelled';
 }
 
-type activityStatus    : String enum {
+type activityStatus        : String enum {
     initiated = 'initiated';
     inprogress = 'inprogress';
     onhold = 'onhold';
@@ -54,25 +54,34 @@ type activityStatus    : String enum {
     cancelled = 'cancelled';
 }
 
-type activityPriority  : String enum {
+type activityPriority      : String enum {
     low = 'low';
     medium = 'medium';
     high = 'high';
 }
 
-type attachmentType    : String enum {
+type attachmentType        : String enum {
     employeeResume = 'employeeResume';
     projectrequirements = 'projectRequirements';
 }
 
-type AttachmentDetails : {
+type AttachmentDetails     : {
     fileName  : String(100);
     mediaType : String(100);
     file      : LargeBinary;
     fileSize  : Integer;
 }
 
-type EmployeeDetails   : {
+type EmployeeDetails       : {
+    firstName : String(100);
+    lastName  : String(100);
+    email     : String(100);
+    position  : String(100);
+    resume    : array of AttachmentDetails;
+}
+
+type updateEmployeeDetails : {
+    ID        : String;
     firstName : String(100);
     lastName  : String(100);
     email     : String(100);
@@ -81,13 +90,15 @@ type EmployeeDetails   : {
 }
 
 entity Employee : cuid, managed {
-    userName  : String(100);
-    firstName : String(100);
-    lastName  : String(100);
-    fullName  : String(100);
-    email     : String(100);
-    position  : employeePosition;
-    isActive  : Boolean default true;
+    userName     : String(100);
+    firstName    : String(100);
+    lastName     : String(100);
+    fullName     : String(100);
+    email        : String(100);
+    creatorName  : String(100);
+    modifierName : String(100);
+    position     : employeePosition;
+    isActive     : Boolean default true;
 }
 
 entity Project : cuid, managed {
@@ -147,16 +158,18 @@ entity ProjectTaskComment : cuid, managed {
 // }
 
 entity Asset : cuid, managed {
-    assetid    : String(100); //It can be the Employee id or project id to get the attachment details of the particular Employee or Project
-    assetType  : attachmentType;
-    attachment : Association to many Attachment
-                     on attachment.attachmentAsset = $self
+    assetid      : String(100); //It can be the Employee id or project id to get the attachment details of the particular Employee or Project
+    creatorName  : String(100);
+    modifierName : String(100);
+    assetType    : attachmentType;
+    attachment   : Association to many Attachment
+                       on attachment.attachmentAsset = $self
 }
 
 entity Attachment : cuid {
-    attachmentAsset     : Association to Asset;
-    fileName  : String(150);
-    file      : LargeBinary;
-    mediaType : String(150);
-    fileSize  : Integer;
+    attachmentAsset : Association to Asset;
+    fileName        : String(150);
+    file            : LargeBinary;
+    mediaType       : String(150);
+    fileSize        : Integer;
 }
