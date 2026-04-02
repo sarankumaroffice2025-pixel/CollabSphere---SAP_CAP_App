@@ -38,4 +38,9 @@ service collabsphere {
     action deleteEmployeeDetails(ID: String)                             returns {
         deletetionStatus : Boolean;
     }
+
+    //action to send the Mail
+    action sendMail(data: collabSphere.MailDetails)                      returns {
+        mailSendStatus : Boolean;
+    }
 }

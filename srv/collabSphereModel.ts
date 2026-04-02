@@ -1,6 +1,10 @@
 import cds from "@sap/cds";
 import { Request, Service } from "@sap/cds";
 import { Readable } from "node:stream";
+import * as xsenv from "@sap/xsenv";
+import nodemailer from "nodemailer";
+
+xsenv.loadEnv();
 
 export default class collabSphereService extends cds.ApplicationService {
   async init(): Promise<void> {
@@ -26,6 +30,9 @@ export default class collabSphereService extends cds.ApplicationService {
         "deleteEmployeeDetails",
         this.handleDeleteEmployeeDetails.bind(this),
       ));
+
+    //action tp send the mail for any action
+    this.on("sendMail", this.handleSendMail.bind(this));
 
     await super.init();
   }
@@ -240,7 +247,7 @@ export default class collabSphereService extends cds.ApplicationService {
         position: position,
         isActive: 1,
         modifierName: modifierName,
-      });
+      }).where({ ID: ID });
 
       const [existingAsset] = await SELECT.from(Asset).where({ assetid: ID });
       console.log(`Existing Asset ::: ${JSON.stringify(existingAsset)}`);
@@ -264,7 +271,7 @@ export default class collabSphereService extends cds.ApplicationService {
         }
         await UPDATE(Attachment)
           .set({
-            fileNAme: attachment.fileName,
+            fileName: attachment.fileName,
             mediaType: attachment.mediaType,
             file: Buffer.from(attachment.file, "base64"),
             fileSize: attachment.fileSize,
@@ -308,7 +315,7 @@ export default class collabSphereService extends cds.ApplicationService {
       await UPDATE(Employee).set({
         isActive: 0,
         modifierName: modifierName,
-      });
+      }).where({ ID: ID });
 
       return {
         deletionStatus: true,
@@ -319,6 +326,71 @@ export default class collabSphereService extends cds.ApplicationService {
         500,
         `Failed to Delete the Employee Details ::: ${error.message}`,
       );
+    }
+  }
+
+  private async handleSendMail(req: Request) {
+    try {
+      const { to, cc, bcc, subject, body, attachments } = req.data.data;
+
+      if (!to || to.length === 0) {
+        return req.reject(400, `Missing recipient email(s)`);
+      }
+      if (!subject) {
+        return req.reject(400, `Missing email subject`);
+      }
+      if (!body) {
+        return req.reject(400, `Missing email body`);
+      }
+
+      const smtpUser = process.env.SMTP_USER;
+      const smtpAppPassword = process.env.SMTP_APP_PASSWORD;
+
+      if (!smtpUser || !smtpAppPassword) {
+        return req.reject(
+          500,
+          `SMTP credentials not configured. Set SMTP_USER and SMTP_APP_PASSWORD environment variables.`,
+        );
+      }
+
+      const transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: smtpUser,
+          pass: smtpAppPassword,
+        },
+      });
+
+      const mailOptions: nodemailer.SendMailOptions = {
+        from: smtpUser,
+        to: to.join(", "),
+        subject,
+        html: body,
+      };
+
+      if (cc && cc.length > 0) {
+        mailOptions.cc = cc.join(", ");
+      }
+      if (bcc && bcc.length > 0) {
+        mailOptions.bcc = bcc.join(", ");
+      }
+      if (attachments && attachments.length > 0) {
+        mailOptions.attachments = attachments.map((att: any) => ({
+          filename: att.fileName,
+          content: Buffer.from(att.file, "base64"),
+          contentType: att.mediaType,
+        }));
+      }
+
+      const info = await transporter.sendMail(mailOptions);
+      console.log(`Mail sent ::: ${info.messageId}`);
+
+      return { mailSendStatus: true };
+    } catch (error: any) {
+      console.error(`Failed to Send the Mail ::: ${error.message}`);
+      return req.reject(500, `Failed to Send the Mail: ${error.message}`);
     }
   }
 }
