@@ -65,6 +65,22 @@ type attachmentType        : String enum {
     projectrequirements = 'projectRequirements';
 }
 
+type MailAttachment        : {
+    fileName  : String(100);
+    mediaType : String(100);
+    file      : LargeBinary;
+    fileSize  : Integer;
+}
+
+type MailDetails           : {
+    to          : array of String;
+    cc          : array of String;
+    bcc         : array of String;
+    subject     : String;
+    body        : String;
+    attachments : array of MailAttachment;
+}
+
 type AttachmentDetails     : {
     fileName  : String(100);
     mediaType : String(100);

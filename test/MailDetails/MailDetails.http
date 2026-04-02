@@ -1,0 +1,52 @@
+@baseurl=http://localhost:4004/odata/v4/collabsphere
+
+### Send Mail - Single Recipient
+POST {{baseurl}}/sendMail
+Content-Type: application/json
+
+{
+    "data": {
+        "to": ["sarankumarsk115@gmail.com"],
+        "subject": "Welcome to CollabSphere",
+        "body": "<h1>Welcome!</h1><p>You have been successfully onboarded to CollabSphere.</p>"
+    }
+}
+
+###
+
+### Send Mail - Multiple Recipients with CC and BCC
+POST {{baseurl}}/sendMail
+Content-Type: application/json
+
+{
+    "data": {
+        "to": ["sarankumarsk115@gmail.com"],
+        "cc": ["sarankumarsk115@gmail.com"],
+        "bcc": ["sarankumarsk115@gmail.com"],
+        "subject": "Project Kickoff - CollabSphere",
+        "body": "<h2>Project Kickoff</h2><p>Dear Team,</p><p>This is to inform you that the project has officially kicked off. Please review the details and reach out if you have any questions.</p><br/><p>Regards,<br/>CollabSphere Team</p>"
+    }
+}
+
+###
+
+### Send Mail - With Attachment
+POST {{baseurl}}/sendMail
+Content-Type: application/json
+
+{
+    "data": {
+        "to": ["sarankumarsk115@gmail.com"],
+        "cc": ["sarankumarsk115@gmail.com"],
+        "subject": "Employee Onboarding Documents",
+        "body": "<p>Please find the attached onboarding document.</p>",
+        "attachments": [
+            {
+                "fileName": "onboarding.txt",
+                "mediaType": "text/plain",
+                "file": "SGVsbG8sIFdlbGNvbWUgdG8gQ29sbGFiU3BoZXJlIQ==",
+                "fileSize": 32
+            }
+        ]
+    }
+}
