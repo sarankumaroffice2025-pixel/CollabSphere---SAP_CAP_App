@@ -13,4 +13,4 @@ cds.on("bootstrap", (app: any) => {
   });
 });
 
-module.exports = cds.server;
+export default cds.server;
