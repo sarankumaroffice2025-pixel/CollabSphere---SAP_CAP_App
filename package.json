@@ -24,14 +24,20 @@
     "@types/node-jose": "^1.1.13",
     "@types/nodemailer": "^7.0.11",
     "@types/sap__xsenv": "^3.3.2",
+    "@typescript-eslint/eslint-plugin": "^8.58.0",
+    "@typescript-eslint/parser": "^8.58.0",
+    "eslint": "^10.1.0",
     "tsx": "^4",
     "typescript": "^5"
   },
   "scripts": {
     "start": "cds-serve",
-    "dev": "cds watch --profile development"
+    "dev": "cds watch --profile development",
+    "lint": "eslint srv/",
+    "lint:fix": "eslint srv/ --fix"
   },
   "private": true,
+  "type": "module",
   "cds": {},
   "imports": {
     "#cds-models/*": "./@cds-models/*/index.js"

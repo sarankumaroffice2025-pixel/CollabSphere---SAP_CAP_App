@@ -89,32 +89,38 @@ type AttachmentDetails     : {
 }
 
 type EmployeeDetails       : {
-    firstName : String(100);
-    lastName  : String(100);
-    email     : String(100);
-    position  : String(100);
-    resume    : array of AttachmentDetails;
+    firstName        : String(100);
+    lastName         : String(100);
+    email            : String(100);
+    position         : String(100);
+    resume           : array of AttachmentDetails;
+    profile          : LargeBinary;
+    profileMediaType : String(150);
 }
 
 type updateEmployeeDetails : {
-    ID        : String;
-    firstName : String(100);
-    lastName  : String(100);
-    email     : String(100);
-    position  : String(100);
-    resume    : array of AttachmentDetails;
+    ID               : String;
+    firstName        : String(100);
+    lastName         : String(100);
+    email            : String(100);
+    position         : String(100);
+    resume           : array of AttachmentDetails;
+    profile          : LargeBinary;
+    profileMediaType : String(150);
 }
 
 entity Employee : cuid, managed {
-    userName     : String(100);
-    firstName    : String(100);
-    lastName     : String(100);
-    fullName     : String(100);
-    email        : String(100);
-    creatorName  : String(100);
-    modifierName : String(100);
-    position     : employeePosition;
-    isActive     : Boolean default true;
+    userName         : String(100);
+    firstName        : String(100);
+    lastName         : String(100);
+    fullName         : String(100);
+    email            : String(100);
+    creatorName      : String(100);
+    modifierName     : String(100);
+    position         : employeePosition;
+    isActive         : Boolean default true;
+    profile          : LargeBinary;
+    profileMediaType : String(150);
 }
 
 entity Project : cuid, managed {

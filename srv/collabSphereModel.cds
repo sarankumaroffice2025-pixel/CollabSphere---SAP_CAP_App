@@ -17,15 +17,17 @@ service collabsphere {
 
     //action to get the Employee Details
     action accessEmployeeDetails(ID: String)                             returns {
-        ID        : String;
-        userName  : String;
-        firstName : String;
-        lastName  : String;
-        fullName  : String;
-        email     : String;
-        position  : String;
-        isActive  : Boolean;
-        resume    : collabSphere.AttachmentDetails;
+        ID               : String;
+        userName         : String;
+        firstName        : String;
+        lastName         : String;
+        fullName         : String;
+        email            : String;
+        position         : String;
+        isActive         : Boolean;
+        resume           : collabSphere.AttachmentDetails;
+        profile          : LargeBinary;
+        profileMediaType : String;
     }
 
     //action to update the Employee Details

@@ -1,10 +1,19 @@
 import cds from "@sap/cds";
-import { Request, Service } from "@sap/cds";
+import { Request } from "@sap/cds";
 import { Readable } from "node:stream";
 import * as xsenv from "@sap/xsenv";
 import nodemailer from "nodemailer";
 
 xsenv.loadEnv();
+
+const LOG = cds.log("collabSphere");
+
+interface AttachmentInput {
+  fileName: string;
+  mediaType: string;
+  file: string;
+  fileSize: number;
+}
 
 export default class collabSphereService extends cds.ApplicationService {
   async init(): Promise<void> {
@@ -44,12 +53,12 @@ export default class collabSphereService extends cds.ApplicationService {
     }
     return Buffer.concat(chunks);
   }
+
   private async handleCreateEmployeeDetails(req: Request) {
     const db = cds.connect.to("db");
     const { Employee, Asset, Attachment } = (await db).entities;
-    const user = req.user;
     try {
-      const { firstName, lastName, email, position, resume } = req.data.data;
+      const { firstName, lastName, email, position, resume, profile, profileMediaType } = req.data.data;
       if (
         !firstName ||
         !lastName ||
@@ -60,12 +69,12 @@ export default class collabSphereService extends cds.ApplicationService {
       ) {
         return req.reject(400, `Missing Employee Details`);
       }
-      console.log(`User Details ::: ${JSON.stringify(req.user)}`);
-      let userName = email;
+      LOG.info(`User Details ::: ${JSON.stringify(req.user)}`);
+      const userName = email;
 
       const existingUser = await SELECT.from(Employee).where({ email: email });
 
-      console.log(`Existing User ::: ${JSON.stringify(existingUser)}`);
+      LOG.info(`Existing User ::: ${JSON.stringify(existingUser)}`);
 
       if (existingUser.length > 0) {
         return req.reject(409, `Employee Already exists`);
@@ -83,8 +92,8 @@ export default class collabSphereService extends cds.ApplicationService {
         modifierName = currentUser?.fullName;
       }
 
-      let fullName = `${firstName.trim()} ${lastName.trim()}`;
-      const [result] = await INSERT.into(Employee).entries({
+      const fullName = `${firstName.trim()} ${lastName.trim()}`;
+      const employeeData: Record<string, unknown> = {
         userName,
         firstName,
         lastName,
@@ -94,14 +103,19 @@ export default class collabSphereService extends cds.ApplicationService {
         isActive: 1,
         creatorName,
         modifierName,
-      });
+      };
+      if (profile && profileMediaType) {
+        employeeData.profile = Buffer.from(profile, "base64");
+        employeeData.profileMediaType = profileMediaType;
+      }
+      const [result] = await INSERT.into(Employee).entries(employeeData);
 
       if (!result) {
         throw new Error(
           `Failed to Upload the Employee Details in Employee Table`,
         );
       }
-      console.log(`Employee ID ::: ${result?.ID}`);
+      LOG.info(`Employee ID ::: ${result?.ID}`);
       const [assetResult] = await INSERT.into(Asset).entries({
         assetid: result?.ID,
         assetType: "employeeResume",
@@ -111,7 +125,7 @@ export default class collabSphereService extends cds.ApplicationService {
       if (!assetResult) {
         throw new Error(`Failed to Upload the Employee Asset in Asset Table`);
       }
-      console.log(`Asset ID ::: ${assetResult.ID}`);
+      LOG.info(`Asset ID ::: ${assetResult.ID}`);
       for (const attachment of resume) {
         if (
           !attachment.fileName ||
@@ -133,7 +147,7 @@ export default class collabSphereService extends cds.ApplicationService {
             `Failed to Upload the Employee Attachment in Attachment Table`,
           );
         }
-        console.log(
+        LOG.info(
           `Attachment result ::: ${JSON.stringify(await SELECT.from(Attachment).where({ ID: attachmentResult.ID }))}`,
         );
       }
@@ -142,11 +156,12 @@ export default class collabSphereService extends cds.ApplicationService {
         ID: result?.ID,
         creationStatus: true,
       };
-    } catch (error: any) {
-      console.log(`Failed to Create the Employee Details ::: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      LOG.error(`Failed to Create the Employee Details ::: ${message}`);
       return req.reject(
         500,
-        `Failed to Create the Employee Details ::: ${error.message}`,
+        `Failed to Create the Employee Details ::: ${message}`,
       );
     }
   }
@@ -177,11 +192,18 @@ export default class collabSphereService extends cds.ApplicationService {
       if (!existingAttachment) {
         return req.reject(404, `Attachment not Found for the Employee`);
       }
-      console.log(
+      LOG.info(
         `Existing Attachment ::: ${JSON.stringify(existingAttachment)}`,
       );
       const buffer = await this.streamToBuffer(existingAttachment.file);
       const file = buffer.toString("base64");
+
+      let profileBase64: string | null = null;
+      if (existingEmployee.profile) {
+        const profileBuffer = await this.streamToBuffer(existingEmployee.profile);
+        profileBase64 = profileBuffer.toString("base64");
+      }
+
       return {
         ID: ID,
         userName: existingEmployee.userName,
@@ -197,12 +219,15 @@ export default class collabSphereService extends cds.ApplicationService {
           file: file,
           fileSize: existingAttachment.fileSize,
         },
+        profile: profileBase64,
+        profileMediaType: existingEmployee.profileMediaType ?? null,
       };
-    } catch (error: any) {
-      console.log(`Failed To get the Employee Details ::: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      LOG.error(`Failed To get the Employee Details ::: ${message}`);
       return req.reject(
         500,
-        `Failed To get the Employee Details ::: ${error.message}`,
+        `Failed To get the Employee Details ::: ${message}`,
       );
     }
   }
@@ -210,9 +235,8 @@ export default class collabSphereService extends cds.ApplicationService {
   private async handleUpdateEmployeeDetails(req: Request) {
     const db = await cds.connect("db");
     const { Employee, Asset, Attachment } = db.entities;
-    const user = req.user;
     try {
-      const { ID, firstName, lastName, email, position, resume } =
+      const { ID, firstName, lastName, email, position, resume, profile, profileMediaType } =
         req.data.data;
       if (!ID) {
         return req.reject(400, `Missing ID Detils`);
@@ -239,7 +263,7 @@ export default class collabSphereService extends cds.ApplicationService {
       } else {
         modifierName = modifier?.fullName;
       }
-      await UPDATE(Employee).set({
+      const updateData: Record<string, unknown> = {
         firstName: firstName.trim(),
         lastName: lastName.trim(),
         fullName: `${firstName.trim()} ${lastName.trim()}`,
@@ -247,10 +271,15 @@ export default class collabSphereService extends cds.ApplicationService {
         position: position,
         isActive: 1,
         modifierName: modifierName,
-      }).where({ ID: ID });
+      };
+      if (profile && profileMediaType) {
+        updateData.profile = Buffer.from(profile, "base64");
+        updateData.profileMediaType = profileMediaType;
+      }
+      await UPDATE(Employee).set(updateData).where({ ID: ID });
 
       const [existingAsset] = await SELECT.from(Asset).where({ assetid: ID });
-      console.log(`Existing Asset ::: ${JSON.stringify(existingAsset)}`);
+      LOG.info(`Existing Asset ::: ${JSON.stringify(existingAsset)}`);
       if (!existingAsset) {
         return req.reject(404, `Asset not Found for the Employee`);
       }
@@ -282,11 +311,12 @@ export default class collabSphereService extends cds.ApplicationService {
         ID: ID,
         updateStatus: true,
       };
-    } catch (error: any) {
-      console.log(`Failed to Update the Employee Details ::: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      LOG.error(`Failed to Update the Employee Details ::: ${message}`);
       return req.reject(
         500,
-        `Failed to Update the Employee Details ::: ${error.message}`,
+        `Failed to Update the Employee Details ::: ${message}`,
       );
     }
   }
@@ -294,7 +324,6 @@ export default class collabSphereService extends cds.ApplicationService {
   private async handleDeleteEmployeeDetails(req: Request) {
     const db = await cds.connect.to("db");
     const { Employee } = db.entities;
-    const user = req.user;
     try {
       const { ID } = req.data;
       if (!ID) {
@@ -320,11 +349,12 @@ export default class collabSphereService extends cds.ApplicationService {
       return {
         deletionStatus: true,
       };
-    } catch (error: any) {
-      console.log(`Failed to Delete the Employee Details ::: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      LOG.error(`Failed to Delete the Employee Details ::: ${message}`);
       return req.reject(
         500,
-        `Failed to Delete the Employee Details ::: ${error.message}`,
+        `Failed to Delete the Employee Details ::: ${message}`,
       );
     }
   }
@@ -377,7 +407,7 @@ export default class collabSphereService extends cds.ApplicationService {
         mailOptions.bcc = bcc.join(", ");
       }
       if (attachments && attachments.length > 0) {
-        mailOptions.attachments = attachments.map((att: any) => ({
+        mailOptions.attachments = attachments.map((att: AttachmentInput) => ({
           filename: att.fileName,
           content: Buffer.from(att.file, "base64"),
           contentType: att.mediaType,
@@ -385,12 +415,13 @@ export default class collabSphereService extends cds.ApplicationService {
       }
 
       const info = await transporter.sendMail(mailOptions);
-      console.log(`Mail sent ::: ${info.messageId}`);
+      LOG.info(`Mail sent ::: ${info.messageId}`);
 
       return { mailSendStatus: true };
-    } catch (error: any) {
-      console.error(`Failed to Send the Mail ::: ${error.message}`);
-      return req.reject(500, `Failed to Send the Mail: ${error.message}`);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      LOG.error(`Failed to Send the Mail ::: ${message}`);
+      return req.reject(500, `Failed to Send the Mail: ${message}`);
     }
   }
 }
