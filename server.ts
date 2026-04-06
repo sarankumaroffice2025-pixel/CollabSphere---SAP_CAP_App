@@ -1,6 +1,6 @@
-const cds = require("@sap/cds");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+import cds from '@sap/cds';
+import cors from 'cors';
+import bodyParser from 'body-parser';
 
 cds.on("bootstrap", (app: any) => {
   app.use(cors());
