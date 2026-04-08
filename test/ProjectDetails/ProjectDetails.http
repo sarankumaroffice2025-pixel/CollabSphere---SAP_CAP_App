@@ -1,0 +1,76 @@
+@baseurl=http://localhost:4004/odata/v4/collabsphere
+
+### Create Project
+POST {{baseurl}}/createProject
+Content-Type: application/json
+
+{
+  "data": {
+    "title": "CollabSphere Platform",
+    "description": "Internal collaboration platform for the organization",
+    "startDate": "2026-04-10",
+    "endDate": "2026-12-31",
+    "budget": 50000.00,
+    "clients": [
+      {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@client.com"
+      },
+      {
+        "firstName": "Jane",
+        "lastName": "Doe",
+        "email": "jane.doe@client.com"
+      }
+    ],
+    "approvers": [
+      {
+        "approver": "EMPLOYEE_ID_HERE",
+        "approvalStatus": "request",
+        "description": "Initial approval request"
+      }
+    ]
+  }
+}
+
+###
+
+### Get Project by ID
+POST {{baseurl}}/accessProject
+Content-Type: application/json
+
+{
+  "ID": "PROJECT_ID_HERE"
+}
+
+###
+
+### Update Project
+POST {{baseurl}}/editProject
+Content-Type: application/json
+
+{
+  "data": {
+    "ID": "PROJECT_ID_HERE",
+    "title": "CollabSphere Platform v2",
+    "description": "Updated collaboration platform description",
+    "startDate": "2026-04-10",
+    "endDate": "2027-03-31",
+    "budget": 75000.00,
+    "approvedStatus": "approved",
+    "clients": [
+      {
+        "firstName": "John",
+        "lastName": "Smith",
+        "email": "john.smith@client.com"
+      }
+    ],
+    "approvers": [
+      {
+        "approver": "EMPLOYEE_ID_HERE",
+        "approvalStatus": "approved",
+        "description": "Approved after review"
+      }
+    ]
+  }
+}

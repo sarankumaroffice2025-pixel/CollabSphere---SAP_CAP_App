@@ -5,7 +5,7 @@ using {
     managed
 } from '@sap/cds/common';
 
-type employeePosition      : String enum {
+type employeePosition       : String enum {
     ceo = 'ceo';
     cto = 'cto';
     cfo = 'cfo';
@@ -39,14 +39,14 @@ type employeePosition      : String enum {
     others = 'others';
 };
 
-type approvalStatus        : String enum {
+type approvalStatus         : String enum {
     approved = 'approved';
     onhold = 'onhold';
     request = 'request';
     cancelled = 'cancelled';
 }
 
-type activityStatus        : String enum {
+type activityStatus         : String enum {
     initiated = 'initiated';
     inprogress = 'inprogress';
     onhold = 'onhold';
@@ -54,25 +54,25 @@ type activityStatus        : String enum {
     cancelled = 'cancelled';
 }
 
-type activityPriority      : String enum {
+type activityPriority       : String enum {
     low = 'low';
     medium = 'medium';
     high = 'high';
 }
 
-type attachmentType        : String enum {
+type attachmentType         : String enum {
     employeeResume = 'employeeResume';
     projectrequirements = 'projectRequirements';
 }
 
-type MailAttachment        : {
+type MailAttachment         : {
     fileName  : String(100);
     mediaType : String(100);
     file      : LargeBinary;
     fileSize  : Integer;
 }
 
-type MailDetails           : {
+type MailDetails            : {
     to          : array of String;
     cc          : array of String;
     bcc         : array of String;
@@ -81,14 +81,14 @@ type MailDetails           : {
     attachments : array of MailAttachment;
 }
 
-type AttachmentDetails     : {
+type AttachmentDetails      : {
     fileName  : String(100);
     mediaType : String(100);
     file      : LargeBinary;
     fileSize  : Integer;
 }
 
-type EmployeeDetails       : {
+type EmployeeDetails        : {
     firstName        : String(100);
     lastName         : String(100);
     email            : String(100);
@@ -98,7 +98,7 @@ type EmployeeDetails       : {
     profileMediaType : String(150);
 }
 
-type updateEmployeeDetails : {
+type updateEmployeeDetails  : {
     ID               : String;
     firstName        : String(100);
     lastName         : String(100);
@@ -109,11 +109,39 @@ type updateEmployeeDetails : {
     profileMediaType : String(150);
 }
 
+type CorporateDetails       : {
+    corporateName : String(100);
+    corporateURL  : String(100);
+}
+
+type UpdateCorporateDetails : {
+    ID            : String;
+    corporateName : String(100);
+    corporateURL  : String(100);
+    activeStatus  : Boolean;
+}
+
+type ClientDetails          : {
+    clientFirstName : String(100);
+    clientLastName  : String(100);
+    clientEmail     : String(100);
+    corporateID     : String;
+}
+
+type UpdateClientDetails    : {
+    ID              : String;
+    clientFirstName : String(100);
+    clientLastName  : String(100);
+    clientEmail     : String(100);
+    corporateID     : String;
+    activeStatus    : Boolean;
+}
+
 entity Employee : cuid, managed {
     userName         : String(100);
     firstName        : String(100);
     lastName         : String(100);
-    fullName         : String(100);
+    fullName         : String(200);
     email            : String(100);
     creatorName      : String(100);
     modifierName     : String(100);
@@ -123,37 +151,57 @@ entity Employee : cuid, managed {
     profileMediaType : String(150);
 }
 
+entity Corporate : cuid, managed {
+    corporateName : String(100);
+    corporateURL  : String(100);
+    creatorName   : String(100);
+    modifierName  : String(100);
+    activeStatus  : Boolean default true;
+}
+
+entity Client : cuid, managed {
+    clientFirstName : String(100);
+    clientLastName  : String(100);
+    clientFullName  : String(200);
+    clientEmail     : String(100);
+    activeStatus    : Boolean default true;
+    corporate       : Association to one Corporate;
+    creatorName     : String(100);
+    modifierName    : String(100);
+}
+
 entity Project : cuid, managed {
     title          : String;
     description    : String;
     startDate      : Date;
     endDate        : Date;
     approvedStatus : approvalStatus;
-    budget         : Decimal(25, 25);
+    budget         : Decimal(15, 2);
+    creatorName    : String(100);
+    modifierName   : String(100);
+    corporate      : Association to one Corporate;
     clients        : Association to many ProjectClient
                          on clients.project = $self;
     approvers      : Association to many ProjectApprover
                          on approvers.project = $self;
 }
 
+
 entity ProjectClient : cuid, managed {
-    project   : Association to Project;
-    firstName : String(100);
-    lastName  : String(100);
-    fullName  : String(100);
-    email     : String(100);
+    project : Association to Project;
+    client  : Association to Client;
 }
 
 entity ProjectApprover : cuid, managed {
-    approver       : String(100); // Employee ID
-    project        : Association to Project;
+    approver       : Association to Employee; // Employee ID
     approvalStatus : approvalStatus;
     description    : String;
+    project        : Association to Project;
 }
 
 
 entity ProjectTeam : cuid, managed {
-    project      : String(100);
+    project      : Association to Project;
     employeeId   : String(100);
     employeeName : String(100);
 }

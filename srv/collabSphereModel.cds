@@ -8,6 +8,8 @@ service collabsphere {
     entity collabSphereProjectTask     as projection on collabSphere.ProjectTask;
     entity collabSphereTaskComment     as projection on collabSphere.ProjectTaskComment;
     entity collabSphereAsset           as projection on collabSphere.Asset;
+    entity collabSphereCorporate       as projection on collabSphere.Corporate;
+    entity collabSphereClient          as projection on collabSphere.Client;
 
     //action to enter the Employee Details
     action createEmployeeDetails(data: collabSphere.EmployeeDetails)     returns {
@@ -45,4 +47,31 @@ service collabsphere {
     action sendMail(data: collabSphere.MailDetails)                      returns {
         mailSendStatus : Boolean;
     }
+
+
+    //action to crete the Corporate
+    action createCorporate(data: collabSphere.CorporateDetails)          returns {
+        ID             : String(100);
+        creationStatus : Boolean;
+    }
+
+    //action to Update the Corporate Details
+    action updateCorporate(data: collabSphere.UpdateCorporateDetails)    returns {
+        ID           : String(100);
+        updateStatus : Boolean;
+    }
+
+    //action to create a Client
+    action createClient(data: collabSphere.ClientDetails)                returns {
+        ID             : String(100);
+        creationStatus : Boolean;
+    }
+
+    //action to update the Client Details
+    action updateClient(data: collabSphere.UpdateClientDetails)                returns {
+        ID           : String(100);
+        updateStatus : Boolean;
+    }
+
+
 }
