@@ -1,0 +1,24 @@
+@baseurl=http://localhost:4004/odata/v4/collabsphere
+
+### Create Corporate
+POST {{baseurl}}/createCorporate
+Content-Type: application/json
+
+{
+  "data":{
+  "corporateName": "Global Soft Solutions",
+  "corporateURL": "https://www.globalsoftsolutions.com"
+}
+}
+
+### Update Corporate
+POST {{baseurl}}/updateCorporate
+Content-Type: application/json
+
+{
+  "data":{
+  "ID":"6236b47b-5127-4391-9db5-7c0a6522d867",
+  "corporateName": "Global Soft Solutions Pvt Ltd",
+  "corporateURL": "https://www.globalsoftsolutions.com"
+}
+}

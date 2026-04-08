@@ -1,0 +1,29 @@
+@baseurl=http://localhost:4004/odata/v4/collabsphere
+
+### Create Client
+POST {{baseurl}}/createClient
+Content-Type: application/json
+
+{
+ "data":{
+  "clientFirstName": "Sarah",
+  "clientLastName": "Johnson",
+  "clientEmail": "sarah.johnson@globalsoftsolutions.com",
+  "corporateID":"6236b47b-5127-4391-9db5-7c0a6522d867"
+ }
+}
+
+### Update Client
+POST {{baseurl}}/updateClient
+Content-Type: application/json
+
+{
+ "data":{
+  "ID":"c8be62b5-1736-42ff-bbfc-d5e96e086673",
+  "clientFirstName": "Sarah",
+  "clientLastName": "Johnson",
+  "clientEmail": "sarah.johnson@globalsoftsolutions.com",
+  "corporateID":"6236b47b-5127-4391-9db5-7c0a6522d867",
+  "activeStatus": true
+ }
+}

@@ -22,7 +22,7 @@ export default [
     },
     rules: {
       // General
-      "no-console": "warn",
+      "no-console": "off",
       "eqeqeq": ["error", "always"],
       "no-var": "error",
       "prefer-const": "error",

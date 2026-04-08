@@ -6,8 +6,6 @@ import nodemailer from "nodemailer";
 
 xsenv.loadEnv();
 
-const LOG = cds.log("collabSphere");
-
 interface AttachmentInput {
   fileName: string;
   mediaType: string;
@@ -43,6 +41,18 @@ export default class collabSphereService extends cds.ApplicationService {
     //action tp send the mail for any action
     this.on("sendMail", this.handleSendMail.bind(this));
 
+    // action to Create the Corporate Details
+    this.on("createCorporate", this.handleCreateCorporate.bind(this));
+
+    //action to update the Corporate Details
+    this.on("updateCorporate", this.handleUpdateCorporate.bind(this));
+
+    // action to Create the Client Details
+    this.on("createClient", this.handleCreateClient.bind(this));
+
+    //action to update the Client Details
+    this.on("updateClient", this.handleUpdateClient.bind(this));
+
     await super.init();
   }
 
@@ -58,7 +68,15 @@ export default class collabSphereService extends cds.ApplicationService {
     const db = cds.connect.to("db");
     const { Employee, Asset, Attachment } = (await db).entities;
     try {
-      const { firstName, lastName, email, position, resume, profile, profileMediaType } = req.data.data;
+      const {
+        firstName,
+        lastName,
+        email,
+        position,
+        resume,
+        profile,
+        profileMediaType,
+      } = req.data.data;
       if (
         !firstName ||
         !lastName ||
@@ -69,12 +87,12 @@ export default class collabSphereService extends cds.ApplicationService {
       ) {
         return req.reject(400, `Missing Employee Details`);
       }
-      LOG.info(`User Details ::: ${JSON.stringify(req.user)}`);
+      console.log(`User Details ::: ${JSON.stringify(req.user)}`);
       const userName = email;
 
       const existingUser = await SELECT.from(Employee).where({ email: email });
 
-      LOG.info(`Existing User ::: ${JSON.stringify(existingUser)}`);
+      console.log(`Existing User ::: ${JSON.stringify(existingUser)}`);
 
       if (existingUser.length > 0) {
         return req.reject(409, `Employee Already exists`);
@@ -115,7 +133,7 @@ export default class collabSphereService extends cds.ApplicationService {
           `Failed to Upload the Employee Details in Employee Table`,
         );
       }
-      LOG.info(`Employee ID ::: ${result?.ID}`);
+      console.log(`Employee ID ::: ${result?.ID}`);
       const [assetResult] = await INSERT.into(Asset).entries({
         assetid: result?.ID,
         assetType: "employeeResume",
@@ -125,7 +143,7 @@ export default class collabSphereService extends cds.ApplicationService {
       if (!assetResult) {
         throw new Error(`Failed to Upload the Employee Asset in Asset Table`);
       }
-      LOG.info(`Asset ID ::: ${assetResult.ID}`);
+      console.log(`Asset ID ::: ${assetResult.ID}`);
       for (const attachment of resume) {
         if (
           !attachment.fileName ||
@@ -147,7 +165,7 @@ export default class collabSphereService extends cds.ApplicationService {
             `Failed to Upload the Employee Attachment in Attachment Table`,
           );
         }
-        LOG.info(
+        console.log(
           `Attachment result ::: ${JSON.stringify(await SELECT.from(Attachment).where({ ID: attachmentResult.ID }))}`,
         );
       }
@@ -158,7 +176,7 @@ export default class collabSphereService extends cds.ApplicationService {
       };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      LOG.error(`Failed to Create the Employee Details ::: ${message}`);
+      console.error(`Failed to Create the Employee Details ::: ${message}`);
       return req.reject(
         500,
         `Failed to Create the Employee Details ::: ${message}`,
@@ -192,7 +210,7 @@ export default class collabSphereService extends cds.ApplicationService {
       if (!existingAttachment) {
         return req.reject(404, `Attachment not Found for the Employee`);
       }
-      LOG.info(
+      console.log(
         `Existing Attachment ::: ${JSON.stringify(existingAttachment)}`,
       );
       const buffer = await this.streamToBuffer(existingAttachment.file);
@@ -200,7 +218,9 @@ export default class collabSphereService extends cds.ApplicationService {
 
       let profileBase64: string | null = null;
       if (existingEmployee.profile) {
-        const profileBuffer = await this.streamToBuffer(existingEmployee.profile);
+        const profileBuffer = await this.streamToBuffer(
+          existingEmployee.profile,
+        );
         profileBase64 = profileBuffer.toString("base64");
       }
 
@@ -224,7 +244,7 @@ export default class collabSphereService extends cds.ApplicationService {
       };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      LOG.error(`Failed To get the Employee Details ::: ${message}`);
+      console.error(`Failed To get the Employee Details ::: ${message}`);
       return req.reject(
         500,
         `Failed To get the Employee Details ::: ${message}`,
@@ -236,8 +256,16 @@ export default class collabSphereService extends cds.ApplicationService {
     const db = await cds.connect("db");
     const { Employee, Asset, Attachment } = db.entities;
     try {
-      const { ID, firstName, lastName, email, position, resume, profile, profileMediaType } =
-        req.data.data;
+      const {
+        ID,
+        firstName,
+        lastName,
+        email,
+        position,
+        resume,
+        profile,
+        profileMediaType,
+      } = req.data.data;
       if (!ID) {
         return req.reject(400, `Missing ID Detils`);
       }
@@ -279,7 +307,7 @@ export default class collabSphereService extends cds.ApplicationService {
       await UPDATE(Employee).set(updateData).where({ ID: ID });
 
       const [existingAsset] = await SELECT.from(Asset).where({ assetid: ID });
-      LOG.info(`Existing Asset ::: ${JSON.stringify(existingAsset)}`);
+      console.log(`Existing Asset ::: ${JSON.stringify(existingAsset)}`);
       if (!existingAsset) {
         return req.reject(404, `Asset not Found for the Employee`);
       }
@@ -313,7 +341,7 @@ export default class collabSphereService extends cds.ApplicationService {
       };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      LOG.error(`Failed to Update the Employee Details ::: ${message}`);
+      console.error(`Failed to Update the Employee Details ::: ${message}`);
       return req.reject(
         500,
         `Failed to Update the Employee Details ::: ${message}`,
@@ -341,24 +369,242 @@ export default class collabSphereService extends cds.ApplicationService {
       } else {
         modifierName = modifier?.fullName;
       }
-      await UPDATE(Employee).set({
-        isActive: 0,
-        modifierName: modifierName,
-      }).where({ ID: ID });
+      await UPDATE(Employee)
+        .set({
+          isActive: 0,
+          modifierName: modifierName,
+        })
+        .where({ ID: ID });
 
       return {
         deletionStatus: true,
       };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      LOG.error(`Failed to Delete the Employee Details ::: ${message}`);
+      console.error(`Failed to Delete the Employee Details ::: ${message}`);
       return req.reject(
         500,
         `Failed to Delete the Employee Details ::: ${message}`,
       );
     }
   }
+  private async handleCreateCorporate(req: Request) {
+    const db = await cds.connect.to("db");
+    const { Employee, Corporate } = db.entities;
+    try {
+      const { corporateName, corporateURL } = req.data.data;
+      console.log(`Corporate Details ::: ${JSON.stringify(req.data.data)}`);
+      if (!corporateName || !corporateURL) {
+        return req.reject(400, `Missing Corporate Details`);
+      }
 
+      const [existingCorporate] = await SELECT.from(Corporate).where({
+        corporateURL: corporateURL,
+      });
+
+      if (existingCorporate) {
+        return req.reject(409, `Corporate with the same URL already exists`);
+      }
+      const [currentUser] = await SELECT.from(Employee).where({
+        email: req.user.id,
+      });
+
+      if (!currentUser) {
+        return req.reject(404, `Current User Not Found`);
+      }
+      const creatorName = currentUser.fullName;
+      const modifierName = currentUser.fullName;
+
+      const [result] = await INSERT.into(Corporate).entries({
+        corporateName,
+        corporateURL,
+        creatorName,
+        modifierName,
+        activeStatus: true,
+      });
+      if (!result) {
+        throw new Error(
+          `Failed to Create the Corporate Details in Corporate Table`,
+        );
+      }
+      console.log(`Corporate ID ::: ${result?.ID}`);
+      return {
+        ID: result?.ID,
+        creationStatus: true,
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to Create the Corporate Details ::: ${message}`);
+      return req.reject(
+        500,
+        `Failed to Create the Corporate Details ::: ${message}`,
+      );
+    }
+  }
+
+  private async handleUpdateCorporate(req: Request) {
+    const db = await cds.connect.to("db");
+    const { Employee, Corporate } = db.entities;
+    try {
+      const { ID, corporateName, corporateURL, activeStatus } = req.data.data;
+      if (!ID || !corporateName || !corporateURL) {
+        return req.reject(400, `Missing Corporate Details`);
+      }
+      const [existingCorporate] = await SELECT.from(Corporate).where({
+        ID: ID,
+      });
+      if (!existingCorporate) {
+        return req.reject(404, `Corporate Not Found`);
+      }
+      const [modifier] = await SELECT.from(Employee).where({ email: req.id });
+      let modifierName;
+      if (!modifier) {
+        modifierName = req.user.id;
+      } else {
+        modifierName = modifier?.fullName;
+      }
+      await UPDATE(Corporate)
+        .set({
+          corporateName,
+          corporateURL,
+          modifierName,
+          activeStatus,
+        })
+        .where({ ID: ID });
+      return {
+        ID: ID,
+        updateStatus: true,
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to Update the Corporate Details ::: ${message}`);
+      return req.reject(
+        500,
+        `Failed to Update the Corporate Details ::: ${message}`,
+      );
+    }
+  }
+  private async handleCreateClient(req: Request) {
+    const db = await cds.connect.to("db");
+    const { Employee, Corporate, Client } = db.entities;
+    try {
+      const { clientFirstName, clientLastName, clientEmail, corporateID } =
+        req.data.data;
+      if (!clientFirstName || !clientLastName || !clientEmail || !corporateID) {
+        return req.reject(400, `Missing Client Details`);
+      }
+      const [existingCorporate] = await SELECT.from(Corporate).where({
+        ID: corporateID,
+      });
+      if (!existingCorporate) {
+        return req.reject(404, `Corporate Not Found`);
+      }
+      const [existingClient] = await SELECT.from(Client).where({
+        clientEmail: clientEmail,
+      });
+      if (existingClient) {
+        return req.reject(
+          409,
+          `Client with the same email already exists for this Corporate`,
+        );
+      }
+      let creatorName;
+      let modifierName;
+      const [currentUser] = await SELECT.from(Employee).where({
+        email: req.user.id,
+      });
+      if (currentUser) {
+        creatorName = currentUser.fullName;
+        modifierName = currentUser.fullName;
+      } else {
+        creatorName = req.user.id;
+        modifierName = req.user.id;
+      }
+
+      const fullName = `${clientFirstName.trim()} ${clientLastName.trim()}`;
+      const [result] = await INSERT.into(Client).entries({
+        clientFirstName,
+        clientLastName,
+        clientFullName: fullName,
+        clientEmail,
+        corporate_ID: corporateID,
+        creatorName,
+        modifierName,
+      });
+      if (!result) {
+        throw new Error(`Failed to Create the Client Details in Client Table`);
+      }
+      console.log(`Client ID ::: ${result?.ID}`);
+      return {
+        ID: result?.ID,
+        creationStatus: true,
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to Create the Client Details ::: ${message}`);
+      return req.reject(
+        500,
+        `Failed to Create the Client Details ::: ${message}`,
+      );
+    }
+  }
+  private async handleUpdateClient(req: Request) {
+    const db = await cds.connect.to("db");
+    const { Employee, Corporate, Client } = db.entities;
+    try {
+      const { ID, clientFirstName, clientLastName, clientEmail, corporateID ,activeStatus} =
+        req.data.data;
+      if (
+        !ID ||
+        !clientFirstName ||
+        !clientLastName ||
+        !clientEmail ||
+        !corporateID
+      ) {
+        return req.reject(400, `Missing Client Details`);
+      }
+      const [existingClient] = await SELECT.from(Client).where({ ID: ID });
+      if (!existingClient) {
+        return req.reject(404, `Client Not Found`);
+      }
+      const [existingCorporate] = await SELECT.from(Corporate).where({
+        ID: corporateID,
+      });
+      if (!existingCorporate) {
+        return req.reject(404, `Corporate Not Found`);
+      }
+      const [modifier] = await SELECT.from(Employee).where({ email: req.id });
+      let modifierName;
+      if (!modifier) {
+        modifierName = req.user.id;
+      } else {
+        modifierName = modifier?.fullName;
+      }
+      const fullName = `${clientFirstName.trim()} ${clientLastName.trim()}`;
+      await UPDATE(Client)
+        .set({
+          clientFirstName,
+          clientLastName,
+          clientFullName: fullName,
+          clientEmail,
+          corporate_ID: corporateID,
+          modifierName,
+          activeStatus,
+        })
+        .where({ ID: ID });
+      return {
+        ID: ID,
+        updateStatus: true,
+      };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to Update the Client Details ::: ${message}`);
+      return req.reject(
+        500,
+        `Failed to Update the Client Details ::: ${message}`,
+      );
+    }
+  }
   private async handleSendMail(req: Request) {
     try {
       const { to, cc, bcc, subject, body, attachments } = req.data.data;
@@ -415,12 +661,12 @@ export default class collabSphereService extends cds.ApplicationService {
       }
 
       const info = await transporter.sendMail(mailOptions);
-      LOG.info(`Mail sent ::: ${info.messageId}`);
+      console.log(`Mail sent ::: ${info.messageId}`);
 
       return { mailSendStatus: true };
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
-      LOG.error(`Failed to Send the Mail ::: ${message}`);
+      console.error(`Failed to Send the Mail ::: ${message}`);
       return req.reject(500, `Failed to Send the Mail: ${message}`);
     }
   }

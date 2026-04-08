@@ -26,6 +26,7 @@ modules:
     requires:
       - name: collabSphere-db
       - name: collabSphere_Cap_App-auth
+      - name: credential-store
 
   - name: collabSphere_Cap_App-db-deployer
     type: hdb
@@ -54,3 +55,16 @@ resources:
           credential-types:
             - "binding-secret"
             - "x509"
+  - name: credential-store
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: credstore
+      service-plan: trial
+      config:
+        authentication:
+          enabled: true
+        namespaces:
+          - name: collabSphere
+            encrypted: true
+            read_access: application
+            write_access: application
