@@ -1,0 +1,659 @@
+@baseurl=http://localhost:4004/odata/v4/collabsphere
+
+### ─────────────────────────────────────────────
+### DEPARTMENT — CREATE
+### ─────────────────────────────────────────────
+
+### Create Department — Engineering
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Engineering"
+    }
+}
+
+###
+
+### Create Department — Technical
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Technical"
+    }
+}
+
+###
+
+### Create Department — Testing & QA
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Testing & QA"
+    }
+}
+
+###
+
+### Create Department — IT Support
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "IT Support"
+    }
+}
+
+###
+
+### Create Department — Human Resources
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Human Resources"
+    }
+}
+
+###
+
+### Create Department — Finance
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Finance"
+    }
+}
+
+###
+
+### Create Department — Product Management
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Product Management"
+    }
+}
+
+###
+
+### Create Department — DevOps & Infrastructure
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "DevOps & Infrastructure"
+    }
+}
+
+###
+
+### Create Department — Executive Leadership
+POST {{baseurl}}/createDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "departmentName": "Executive Leadership"
+    }
+}
+
+###
+
+### ─────────────────────────────────────────────
+### DEPARTMENT — UPDATE
+### ─────────────────────────────────────────────
+
+### Update Department
+POST {{baseurl}}/updateDepartment
+Content-Type: application/json
+
+{
+    "data": {
+        "ID": "113c1276-7583-4880-8a1d-6632460abd21",
+        "departmentName": "Engineering",
+        "activeStatus": true
+    }
+}
+
+###
+
+### ─────────────────────────────────────────────
+### EMPLOYEE POSITION — CREATE
+### (Replace departmentID with the ID returned from the create department calls above)
+### ─────────────────────────────────────────────
+
+### Position — Manager (Engineering)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Manager",
+        "departmentID": "113c1276-7583-4880-8a1d-6632460abd21"
+    }
+}
+
+###
+
+### Position — Technical Lead (Engineering)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Technical Lead",
+        "departmentID": "113c1276-7583-4880-8a1d-6632460abd21"
+    }
+}
+
+###
+
+### Position — Sr. Software Developer (Engineering)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. Software Developer",
+        "departmentID": "113c1276-7583-4880-8a1d-6632460abd21"
+    }
+}
+
+###
+
+### Position — Jr. Software Developer (Engineering)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. Software Developer",
+        "departmentID": "113c1276-7583-4880-8a1d-6632460abd21"
+    }
+}
+
+###
+
+### Position — Manager (Technical)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Manager",
+        "departmentID": "c7dad2e3-6941-4f3c-acb8-a2669b4c0622"
+    }
+}
+
+###
+
+### Position — Technical Architect (Technical)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Technical Architect",
+        "departmentID": "c7dad2e3-6941-4f3c-acb8-a2669b4c0622"
+    }
+}
+
+###
+
+### Position — Sr. Technical Consultant (Technical)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. Technical Consultant",
+        "departmentID": "c7dad2e3-6941-4f3c-acb8-a2669b4c0622"
+    }
+}
+
+###
+
+### Position — Jr. Technical Consultant (Technical)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. Technical Consultant",
+        "departmentID": "c7dad2e3-6941-4f3c-acb8-a2669b4c0622"
+    }
+}
+
+###
+
+### Position — QA Lead (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "QA Lead",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Sr. QA Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. QA Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Jr. QA Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. QA Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Automation Test Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Automation Test Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — IT Support Manager (IT Support)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "IT Support Manager",
+        "departmentID": "96f5db72-c177-4d45-8b65-e6b21ffb092f"
+    }
+}
+
+###
+
+### Position — Sr. IT Support Engineer (IT Support)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. IT Support Engineer",
+        "departmentID": "96f5db72-c177-4d45-8b65-e6b21ffb092f"
+    }
+}
+
+###
+
+### Position — Jr. IT Support Engineer (IT Support)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. IT Support Engineer",
+        "departmentID": "96f5db72-c177-4d45-8b65-e6b21ffb092f"
+    }
+}
+
+###
+
+### Position — HR Manager (Human Resources)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "HR Manager",
+        "departmentID": "9e081b47-87ca-40dc-b8c5-6fce16aad860"
+    }
+}
+
+###
+
+### Position — HR Executive (Human Resources)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "HR Executive",
+        "departmentID": "9e081b47-87ca-40dc-b8c5-6fce16aad860"
+    }
+}
+
+###
+
+### Position — Recruiter (Human Resources)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Recruiter",
+        "departmentID": "9e081b47-87ca-40dc-b8c5-6fce16aad860"
+    }
+}
+
+###
+
+### Position — Finance Manager (Finance)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Finance Manager",
+        "departmentID": "638c3945-f9ba-4e88-8b60-63a38da416f8"
+    }
+}
+
+###
+
+### Position — Sr. Finance Analyst (Finance)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. Finance Analyst",
+        "departmentID": "638c3945-f9ba-4e88-8b60-63a38da416f8"
+    }
+}
+
+###
+
+### Position — Jr. Finance Analyst (Finance)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. Finance Analyst",
+        "departmentID": "638c3945-f9ba-4e88-8b60-63a38da416f8"
+    }
+}
+
+###
+
+### Position — Product Manager (Product Management)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Product Manager",
+        "departmentID": "b44600fe-0f8a-4eb4-a906-4f0d8d5c9d1e"
+    }
+}
+
+###
+
+### Position — Product Owner (Product Management)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Product Owner",
+        "departmentID": "b44600fe-0f8a-4eb4-a906-4f0d8d5c9d1e"
+    }
+}
+
+###
+
+### Position — Business Analyst (Product Management)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Business Analyst",
+        "departmentID": "b44600fe-0f8a-4eb4-a906-4f0d8d5c9d1e"
+    }
+}
+
+###
+
+### Position — DevOps Lead (DevOps & Infrastructure)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "DevOps Lead",
+        "departmentID": "7db2d152-6483-48d8-852a-5b687b9feb95"
+    }
+}
+
+###
+
+### Position — Sr. DevOps Engineer (DevOps & Infrastructure)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. DevOps Engineer",
+        "departmentID": "7db2d152-6483-48d8-852a-5b687b9feb95"
+    }
+}
+
+###
+
+### Position — Jr. DevOps Engineer (DevOps & Infrastructure)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. DevOps Engineer",
+        "departmentID": "7db2d152-6483-48d8-852a-5b687b9feb95"
+    }
+}
+
+###
+
+### Position — Chief Executive Officer / CEO (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Chief Executive Officer",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Chief Technology Officer / CTO (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Chief Technology Officer",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Chief Operating Officer / COO (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Chief Operating Officer",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Chief Financial Officer / CFO (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Chief Financial Officer",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Chief Information Officer / CIO (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Chief Information Officer",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Vice President (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Vice President",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Director (Executive Leadership)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Director",
+        "departmentID": "11fcae5a-3d36-47ea-ac91-5dc575ac7ca9"
+    }
+}
+
+###
+
+### Position — Sr. Test Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Sr. Test Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Jr. Test Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Jr. Test Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Performance Test Engineer (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Performance Test Engineer",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Test Architect (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Test Architect",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### Position — Quality Analyst (Testing & QA)
+POST {{baseurl}}/createEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "positionName": "Quality Analyst",
+        "departmentID": "368f5f38-57ca-4058-a84c-95ec5f62eac0"
+    }
+}
+
+###
+
+### ─────────────────────────────────────────────
+### EMPLOYEE POSITION — UPDATE
+### ─────────────────────────────────────────────
+
+### Update Employee Position
+POST {{baseurl}}/updateEmployeePosition
+Content-Type: application/json
+
+{
+    "data": {
+        "ID": "6ba91abe-8e6c-499b-8156-e79494e72578",
+        "positionName": "Senior Software Engineer",
+        "departmentID": "113c1276-7583-4880-8a1d-6632460abd21"
+    }
+}
