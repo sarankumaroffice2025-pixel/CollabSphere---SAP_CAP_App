@@ -10,67 +10,191 @@ Content-Type: application/json
     "description": "Internal collaboration platform for the organization",
     "startDate": "2026-04-10",
     "endDate": "2026-12-31",
-    "budget": 50000.00,
-    "clients": [
-      {
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "john.smith@client.com"
-      },
-      {
-        "firstName": "Jane",
-        "lastName": "Doe",
-        "email": "jane.doe@client.com"
-      }
-    ],
-    "approvers": [
-      {
-        "approver": "EMPLOYEE_ID_HERE",
-        "approvalStatus": "request",
-        "description": "Initial approval request"
-      }
-    ]
+    "budget": 5000000.00,
+    "corporateID": "4c9d43df-f93a-49cd-b1c8-ea4a2b457e64"
   }
 }
 
-###
-
 ### Get Project by ID
-POST {{baseurl}}/accessProject
+POST {{baseurl}}/accessProjectDetails
 Content-Type: application/json
 
 {
-  "ID": "PROJECT_ID_HERE"
+  "ID": "50642614-7d40-494b-8ffa-504a753efcee"
 }
 
-###
 
 ### Update Project
-POST {{baseurl}}/editProject
+POST {{baseurl}}/updateProject
 Content-Type: application/json
 
 {
   "data": {
-    "ID": "PROJECT_ID_HERE",
+    "ID": "50642614-7d40-494b-8ffa-504a753efcee",
     "title": "CollabSphere Platform v2",
     "description": "Updated collaboration platform description",
     "startDate": "2026-04-10",
     "endDate": "2027-03-31",
     "budget": 75000.00,
     "approvedStatus": "approved",
-    "clients": [
+    "activeStatus": true,
+    "corporateID": "4c9d43df-f93a-49cd-b1c8-ea4a2b457e64"
+  }
+}
+
+### Delete Project
+POST {{baseurl}}/deleteProject
+Content-Type: application/json
+
+{
+  "ID": "50642614-7d40-494b-8ffa-504a753efcee"
+}
+
+
+
+##### Project Client Data
+
+### Create Project Client Data
+POST {{baseurl}}/createProjectClient
+Content-Type: application/json
+
+{
+  "data":{
+  "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+  "corporateID": "6236b47b-5127-4391-9db5-7c0a6522d867",
+  "clientID": [
+    "31d70cf0-b174-4fdf-9034-758684c22b4f",
+    "734a3f3f-8b81-4414-8621-f9f95eb2c46f",
+    "4bd37591-9827-440d-a1bf-dbde07de5bd2"
+  ]
+  }
+}
+
+### Update Project Client Data
+POST {{baseurl}}/updateProjectClient
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "corporateID": "6236b47b-5127-4391-9db5-7c0a6522d867",
+    "clientID": [
+      "31d70cf0-b174-4fdf-9034-758684c22b4f",
+      "734a3f3f-8b81-4414-8621-f9f95eb2c46f"
+    ]
+  }
+}
+
+
+#### Project Approver Details
+
+### Create Project Approver
+POST {{baseurl}}/createProjectApprover
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "approversData": [
+      "cd180778-0355-447f-b73d-a5da05ff7dd3",
+      "56a74b49-2ef9-4b33-9e1b-6baae5bdf54e"
+    ]
+  }
+}
+
+### Update Project Approver Details
+POST {{baseurl}}/updateProjectApprover
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "approversData": [
       {
-        "firstName": "John",
-        "lastName": "Smith",
-        "email": "john.smith@client.com"
-      }
-    ],
-    "approvers": [
-      {
-        "approver": "EMPLOYEE_ID_HERE",
+        "approverID": "cd180778-0355-447f-b73d-a5da05ff7dd3",
         "approvalStatus": "approved",
-        "description": "Approved after review"
+        "comment": "Approved the project details"
+      },
+      {
+        "approverID": "56a74b49-2ef9-4b33-9e1b-6baae5bdf54e",
+        "approvalStatus": "cancelled",
+        "comment": "Rejected the project due to budget concerns"
       }
     ]
+  }
+}
+
+
+### Project Team Details
+#### Create Project Team
+POST {{baseurl}}/createProjectTeam
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "employeeID": [
+      "d9d03320-d7fe-4a76-92ba-8740b353da74"
+    ]
+  }
+}
+
+#### Update Project Team Details from Delete the Existing and recreate it 
+POST {{baseurl}}/updateProjectTeam
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "employeeID": [
+      "d9d03320-d7fe-4a76-92ba-8740b353da74",
+      "56a74b49-2ef9-4b33-9e1b-6baae5bdf54e"
+    ]
+  }
+}
+
+### Add the Employee in existing Project Team
+POST {{baseurl}}/addProjectTeamMember
+Content-Type: application/json
+
+{
+  "data": {
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "employeeID": [
+      "78a1827f-9905-4c09-a657-444538b3748d"
+    ]
+  }
+}
+
+#### Project Task Details
+### Create Project Task
+POST {{baseurl}}/createProjectTask
+Content-Type: application/json
+
+{
+  "data": {
+    "title": "Design Database Schema",
+    "description": "Create the initial database schema for the project",
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "assigneeID": "d9d03320-d7fe-4a76-92ba-8740b353da74",
+    "content": "Define tables, relationships, and constraints for the project database.",
+    "priority": "high"
+  }
+}
+
+### Update Project Task Details
+POST {{baseurl}}/updateProjectTask
+Content-Type: application/json
+
+{
+  "data": {
+    "ID": "57808ec1-ce60-4aa9-82b8-5005511879de",
+    "title": "Design Database Schema - Updated",
+    "description": "Update the database schema design based on new requirements",
+    "projectID": "50642614-7d40-494b-8ffa-504a753efcee",
+    "assigneeID": "56a74b49-2ef9-4b33-9e1b-6baae5bdf54e",
+    "content": "Revise tables, relationships, and constraints for the project database.",
+    "activityStatus": "inprogress",
+    "priority": "medium"
   }
 }
