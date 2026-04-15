@@ -322,11 +322,6 @@ entity ProjectTaskComment : cuid, managed {
     content  : LargeBinary;
 }
 
-// entity ProjectDiscussion : cuid, managed {
-//     project : Association to one Project;
-//     message : LargeBinary;
-// }
-
 entity Asset : cuid, managed {
     assetid      : String(100); //It can be the Employee id or project id to get the attachment details of the particular Employee or Project
     creatorName  : String(100);
