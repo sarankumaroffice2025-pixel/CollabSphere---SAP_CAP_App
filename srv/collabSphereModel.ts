@@ -159,7 +159,7 @@ export default class collabSphereService extends cds.ApplicationService {
         activeStatus: true,
       });
       if (!result) {
-        throw new Error(`Failed to create Department`);
+        return req.reject(500, `Failed to create Department`);
       }
       return { ID: result, creationStatus: true };
     } catch (error: unknown) {
@@ -248,7 +248,7 @@ export default class collabSphereService extends cds.ApplicationService {
       const [result] =
         await INSERT.into(EmployeePosition).entries(positionEntry);
       if (!result) {
-        throw new Error(`Failed to create Employee Position`);
+        return req.reject(500, `Failed to create Employee Position`);
       }
       return { ID: result, creationStatus: true };
     } catch (error: unknown) {
@@ -376,7 +376,7 @@ export default class collabSphereService extends cds.ApplicationService {
         modifierName,
       });
       if (!result) {
-        throw new Error(`Failed to Create the Employee Details`);
+        return req.reject(500, `Failed to Create the Employee Details`);
       }
       console.log(`New Employee ID ::: ${result.ID}`);
       const [assetResult] = await INSERT.into(Asset).entries({
@@ -386,7 +386,7 @@ export default class collabSphereService extends cds.ApplicationService {
         modifierName: modifierName,
       });
       if (!assetResult) {
-        throw new Error(`Failed to Upload the Employee Asset in Asset Table`);
+        return req.reject(500, `Failed to Upload the Employee Asset in Asset Table`);
       }
       console.log(`Asset ID ::: ${assetResult.ID}`);
       for (const attachment of resume) {
@@ -406,9 +406,7 @@ export default class collabSphereService extends cds.ApplicationService {
           attachmentAsset_ID: assetResult.ID,
         });
         if (!attachmentResult) {
-          throw new Error(
-            `Failed to Upload the Employee Attachment in Attachment Table`,
-          );
+          return req.reject(500, `Failed to Upload the Employee Attachment in Attachment Table`);
         }
         console.log(
           `Attachment result ::: ${JSON.stringify(await SELECT.from(Attachment).where({ ID: attachmentResult.ID }))}`,
@@ -674,7 +672,7 @@ export default class collabSphereService extends cds.ApplicationService {
       });
 
       if (!currentUser) {
-        return req.reject(404, `Current User Not Found`);
+        return req.reject(403, `Current User Not Found`);
       }
       const creatorName = currentUser.fullName;
       const modifierName = currentUser.fullName;
@@ -687,9 +685,7 @@ export default class collabSphereService extends cds.ApplicationService {
         activeStatus: true,
       });
       if (!result) {
-        throw new Error(
-          `Failed to Create the Corporate Details in Corporate Table`,
-        );
+        return req.reject(500, `Failed to Create the Corporate Details in Corporate Table`);
       }
       console.log(`Corporate ID ::: ${result}`);
       return {
@@ -796,7 +792,7 @@ export default class collabSphereService extends cds.ApplicationService {
         modifierName,
       });
       if (!result) {
-        throw new Error(`Failed to Create the Client Details in Client Table`);
+        return req.reject(500, `Failed to Create the Client Details in Client Table`);
       }
       console.log(`Client ID ::: ${result}`);
       return {
@@ -923,9 +919,7 @@ export default class collabSphereService extends cds.ApplicationService {
         corporate_ID: corporateID,
       });
       if (!result) {
-        throw new Error(
-          `Failed to Create the Project Details in Project Table`,
-        );
+        return req.reject(500, `Failed to Create the Project Details in Project Table`);
       }
       console.log(`Project ID ::: ${result}`);
       return {
@@ -1130,9 +1124,7 @@ export default class collabSphereService extends cds.ApplicationService {
             modifierName,
           });
           if (!result) {
-            throw new Error(
-              `Failed to Create the Project Client Details in ProjectClient Table for Client ID: ${client}`,
-            );
+            return req.reject(500, `Failed to Create the Project Client Details in ProjectClient Table for Client ID: ${client}`);
           }
         }
       }
@@ -1207,9 +1199,7 @@ export default class collabSphereService extends cds.ApplicationService {
             modifierName,
           });
           if (!result) {
-            throw new Error(
-              `Failed to Update the Project Client Details in ProjectClient Table for Client ID: ${client}`,
-            );
+            return req.reject(500, `Failed to Update the Project Client Details in ProjectClient Table for Client ID: ${client}`);
           }
         }
       }
@@ -1266,9 +1256,7 @@ export default class collabSphereService extends cds.ApplicationService {
             modifierName,
           });
           if (!result) {
-            throw new Error(
-              `Failed to Create the Project Approver Details for Approver ID: ${approverData}`,
-            );
+            return req.reject(500, `Failed to Create the Project Approver Details for Approver ID: ${approverData}`);
           }
         }
       }
@@ -1357,9 +1345,7 @@ export default class collabSphereService extends cds.ApplicationService {
             comment: approverData.comment || null,
           });
           if (!result) {
-            throw new Error(
-              `Failed to Update the Project Approver Details for Approver ID: ${approverData.approverID}`,
-            );
+            return req.reject(500, `Failed to Update the Project Approver Details for Approver ID: ${approverData.approverID}`);
           }
         }
       }
@@ -1425,9 +1411,7 @@ export default class collabSphereService extends cds.ApplicationService {
           modifierName,
         });
         if (!result) {
-          throw new Error(
-            `Failed to Create the Project Team Details for Employee ID: ${empID}`,
-          );
+          return req.reject(500, `Failed to Create the Project Team Details for Employee ID: ${empID}`);
         }
       }
       return {
@@ -1513,7 +1497,7 @@ export default class collabSphereService extends cds.ApplicationService {
           });
 
           if (!result) {
-            throw new Error(`Failed to Insert Employee into Project Team`);
+            return req.reject(500, `Failed to Insert Employee into Project Team`);
           }
         }
       }
@@ -1581,9 +1565,7 @@ export default class collabSphereService extends cds.ApplicationService {
           modifierName,
         });
         if (!result) {
-          throw new Error(
-            `Failed to Update the Project Team Details for Employee ID: ${empID}`,
-          );
+          return req.reject(500, `Failed to Update the Project Team Details for Employee ID: ${empID}`);
         }
       }
       return {
@@ -1672,9 +1654,7 @@ export default class collabSphereService extends cds.ApplicationService {
       });
 
       if (!result) {
-        throw new Error(
-          `Failed to Create the Project Task Details in ProjectTask Table`,
-        );
+        return req.reject(500, `Failed to Create the Project Task Details in ProjectTask Table`);
       }
       console.log(`Project Task ID ::: ${result}`);
       return {
@@ -1795,7 +1775,7 @@ export default class collabSphereService extends cds.ApplicationService {
 
       if (!smtpUser || !smtpAppPassword) {
         return req.reject(
-          500,
+          503,
           `SMTP credentials not configured. Set SMTP_USER and SMTP_APP_PASSWORD environment variables.`,
         );
       }
