@@ -1,5 +1,5 @@
 import cds from "@sap/cds";
-import { Request } from "@sap/cds";
+import type { Request } from "@sap/cds";
 import { Readable } from "node:stream";
 import * as xsenv from "@sap/xsenv";
 import nodemailer from "nodemailer";
