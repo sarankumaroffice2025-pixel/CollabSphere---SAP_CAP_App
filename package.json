@@ -38,7 +38,13 @@
   },
   "private": true,
   "type": "module",
-  "cds": {},
+  "cds": {
+    "requires": {
+      "[production]": {
+        "auth": "xsuaa"
+      }
+    }
+  },
   "imports": {
     "#cds-models/*": "./@cds-models/*/index.js"
   }

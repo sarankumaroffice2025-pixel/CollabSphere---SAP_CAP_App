@@ -45,14 +45,14 @@
       "name": "collabSphere_ApplicationUser",
       "description": "Basic read-only users",
       "role-template-references": [
-        "$XSAPPNAME.ApplicationUser"          
+        "$XSAPPNAME.ApplicationUser"
       ]
     },
     {
       "name": "collabSphere_Administrator",
       "description": "Full access users",
       "role-template-references": [
-        "$XSAPPNAME.Administrator"           
+        "$XSAPPNAME.Administrator"
       ]
     }
   ],
@@ -60,5 +60,6 @@
     "redirect-uris": [
       "https://*.us10-001.hana.ondemand.com/**"
     ]
-  }
+  },
+  "attributes": []
 }
