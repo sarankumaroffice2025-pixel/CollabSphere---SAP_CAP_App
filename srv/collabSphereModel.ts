@@ -126,6 +126,9 @@ export default class collabSphereService extends cds.ApplicationService {
     //action to send the mail for any action
     this.on("sendMail", this.handleSendMail.bind(this));
 
+    //action to test the Job Scheduler
+    this.on("jobScheduler",this.handleJobScheduler.bind(this));
+
     await super.init();
   }
 
@@ -1819,6 +1822,18 @@ export default class collabSphereService extends cds.ApplicationService {
       const message = error instanceof Error ? error.message : String(error);
       console.error(`Failed to Send the Mail ::: ${message}`);
       return req.reject(500, `Failed to Send the Mail: ${message}`);
+    }
+  }
+  
+  private async handleJobScheduler(req: Request) {
+    try{
+      console.log("Job Scheduler Triggered");
+      return {message: "Job Scheduler Triggered Successfully"};
+    }
+    catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error(`Failed to Trigger Job Scheduler ::: ${message}`);
+      return req.reject(500, `Failed to Trigger Job Scheduler: ${message}`);
     }
   }
 }
