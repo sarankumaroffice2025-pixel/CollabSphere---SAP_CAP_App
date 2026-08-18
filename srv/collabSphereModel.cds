@@ -176,4 +176,8 @@ service collabsphere {
         updateStatus : Boolean;
     }
 
+   // Dummy action for Job Scheduler
+   action jobScheduler() returns {
+    message:String;
+   }
 }
