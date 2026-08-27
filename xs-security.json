@@ -1,5 +1,32 @@
 {
-  "scopes": [],
+  "xsappname": "collabSphere_Cap_App-ea883c52trial-dev",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Read",
+      "description": "Read access to CollabSphere data"
+    },
+    {
+      "name": "$XSAPPNAME.Write",
+      "description": "Write access to CollabSphere data"
+    }
+  ],
   "attributes": [],
-  "role-templates": []
+  "role-templates": [
+    {
+      "name": "Viewer",
+      "description": "Read-only access to CollabSphere data",
+      "scope-references": [
+        "$XSAPPNAME.Read"
+      ]
+    },
+    {
+      "name": "Editor",
+      "description": "Read and write access to CollabSphere data",
+      "scope-references": [
+        "$XSAPPNAME.Read",
+        "$XSAPPNAME.Write"
+      ]
+    }
+  ]
 }
