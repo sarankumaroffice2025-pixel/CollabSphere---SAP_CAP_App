@@ -35,6 +35,27 @@ modules:
     requires:
       - name: collabSphere-db
 
+  - name: collabSphere_Cap_App-approuter
+    type: approuter.nodejs
+    path: approuter
+    parameters:
+      keep-existing-routes: true
+      disk-quota: 512M
+      memory: 256M
+    build-parameters:
+      builder: npm
+      ignore:
+        - node_modules/
+        - default-env.json
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: collabSphere_Cap_App-auth
+
 resources:
   - name: collabSphere-db
     type: com.sap.xs.hdi-container

@@ -1,0 +1,27 @@
+{
+  "comment": "Copy this file to default-env.json for local approuter testing. default-env.json is gitignored. Replace the VCAP_SERVICES xsuaa block with the credentials from a real service key: `cf create-service-key collabSphere_Cap_App-auth collabSphere_Cap_App-auth-key` then `cf service-key collabSphere_Cap_App-auth collabSphere_Cap_App-auth-key`.",
+  "PORT": 5000,
+  "destinations": [
+    {
+      "name": "srv-api",
+      "url": "http://localhost:4004",
+      "forwardAuthToken": true
+    }
+  ],
+  "VCAP_SERVICES": {
+    "xsuaa": [
+      {
+        "name": "collabSphere_Cap_App-auth",
+        "label": "xsuaa",
+        "tags": ["xsuaa"],
+        "credentials": {
+          "clientid": "<from service key>",
+          "clientsecret": "<from service key>",
+          "url": "<from service key, e.g. https://ea883c52trial.authentication.us10.hana.ondemand.com>",
+          "identityzone": "ea883c52trial",
+          "xsappname": "collabSphere_Cap_App-<org>-<space>"
+        }
+      }
+    ]
+  }
+}
