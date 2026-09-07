@@ -1,0 +1,15 @@
+{
+  "name": "collabsphere-approuter",
+  "version": "1.0.0",
+  "description": "Standalone AppRouter for the CollabSphere CAP application - single entry point handling XSUAA authentication and routing to the CAP OData backend.",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@sap/approuter": "^20"
+  },
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  }
+}
