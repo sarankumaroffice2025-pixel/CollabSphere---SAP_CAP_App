@@ -1,17 +1,32 @@
 import solace from "solclientjs";
+import { readCredentialValue } from "../credentialStore/credentialStore.js";
 
-function aemCreateSession() {
-  const host = process.env.AEM_HOST;
-  const vpn = process.env.AEM_VPN;
-  const username = process.env.AEM_USERNAME;
-  const password = process.env.AEM_PASSWORD;
-  const queue = process.env.AEM_QUEUE;
+const AEM_CREDSTORE_NAMESPACE =
+  process.env.AEM_CREDSTORE_NAMESPACE ?? "Collabsphere";
+
+// Every AEM setting is stored in the SAP Credential Store as a "key" credential
+// in the AEM_CREDSTORE_NAMESPACE namespace, so it is read from the /key path.
+async function readAemKey(name: string): Promise<string> {
+  return readCredentialValue(name, AEM_CREDSTORE_NAMESPACE, "key");
+}
+
+async function aemCreateSession() {
+  // All AEM credentials come from the SAP Credential Store; a failed read stops
+  // startup (no env-var fallback).
+  const [host, vpn, username, password, queue] = await Promise.all([
+    readAemKey("AEM_HOST"),
+    readAemKey("AEM_VPN"),
+    readAemKey("AEM_USERNAME"),
+    readAemKey("AEM_PASSWORD"),
+    readAemKey("AEM_QUEUE"),
+  ]);
 
   try {
-    // Validate environment variables
+    // Validate credentials
     if (!host || !vpn || !username || !password || !queue) {
       throw new Error(
-        "Missing required environment variables for AEM connection.",
+        "Missing required AEM credentials in the Credential Store namespace " +
+          `"${AEM_CREDSTORE_NAMESPACE}".`,
       );
     }
 
