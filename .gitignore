@@ -20,6 +20,7 @@ mta_archives/
 
 # Other
 .env
+bind.json
 .DS_Store
 *.orig
 *.log

@@ -26,6 +26,7 @@ modules:
     requires:
       - name: collabSphere-db
       - name: collabSphere_Cap_App-auth
+      - name: collabSphere-credstore
 
   - name: collabSphere_Cap_App-db-deployer
     type: hdb
@@ -62,6 +63,12 @@ resources:
     parameters:
       service: hana
       service-plan: hdi-shared
+  - name: collabSphere-credstore
+    # Instance was created manually in the BTP cockpit ("Credential_Store");
+    # bind to it without letting the deployer create or delete it.
+    type: org.cloudfoundry.existing-service
+    parameters:
+      service-name: Credential_Store
   - name: collabSphere_Cap_App-auth
     type: org.cloudfoundry.managed-service
     parameters:

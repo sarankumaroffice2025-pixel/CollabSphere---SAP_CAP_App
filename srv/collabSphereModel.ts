@@ -23,7 +23,7 @@ export default class collabSphereService extends cds.ApplicationService {
   ] as const;
 
   async init(): Promise<void> {
-    aemCreateSession();
+    await aemCreateSession();
 
     //action to create a Department
     this.on("createDepartment", this.handleCreateDepartment.bind(this));
